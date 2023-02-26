@@ -1,0 +1,6 @@
+syntax = "proto3";
+package alis;
+enum Itemtatus{
+	IN_STORAGE = 1,
+	IN_TRANSPORT = 2,
+}	
