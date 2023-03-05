@@ -26,6 +26,7 @@ tokio = { version = "1.21.2", features = ["full"] }
 tonic = { version = "0.8.2", features = ["tokio-rustls", "gzip"] }
 tracing = "0.1.37"
 thiserror = "1.0.38"
+window-vibrancy = "0.3.2"
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
