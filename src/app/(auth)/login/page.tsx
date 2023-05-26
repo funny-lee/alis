@@ -28,7 +28,7 @@ export default function LoginPage() {
         </div>
         <div>
           <Link
-            href="/login/qqvalidate"
+            href="https://mail.qq.com/"
             className={cn(buttonVariants({ variant: "ghost" }), "")}
           >
             <>

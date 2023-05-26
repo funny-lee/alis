@@ -25,6 +25,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import TurnoverBoard from "./components/turnoverboard"
 
 echarts.use([
   TooltipComponent,
@@ -212,11 +213,9 @@ const Overview = () => {
         <StatisticCard
           title="流量占用情况"
           chart={
-            <img
-              src="https://gw.alipayobjects.com/zos/alicdn/qoYmFMxWY/jieping2021-03-29%252520xiawu4.32.34.png"
-              alt="大盘"
-              width="100%"
-            />
+            <>
+              <TurnoverBoard />
+            </>
           }
         />
       </ProCard>

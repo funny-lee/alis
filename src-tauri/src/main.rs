@@ -50,8 +50,8 @@ async fn init(uri: &str) -> Result<()> {
 }
 #[tokio::main]
 async fn main() -> Result<()> {
-    let URI  = std::env::var("DATABASE_URL").unwrap();
-    let db_uri = &URI;
+    let uri = std::env::var("DATABASE_URL").unwrap();
+    let db_uri = &uri;
     init(db_uri).await?;
 
     tauri::Builder::default()

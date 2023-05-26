@@ -43,7 +43,9 @@ export function MyPagesNav({ className, ...props }: MyNavProps) {
 
   return (
     <MenubarMenu>
-      <MenubarTrigger>{pathname}</MenubarTrigger>
+      <MenubarTrigger>
+        {mypages.find((u) => u.href === pathname)?.name}
+      </MenubarTrigger>
       <MenubarContent forceMount>
         <MenubarRadioGroup value={pathname}>
           {mypages.map((example) => (
