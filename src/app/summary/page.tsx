@@ -14,7 +14,7 @@ import {
 } from "echarts/components"
 import * as echarts from "echarts/core"
 import { CanvasRenderer } from "echarts/renderers"
-import "echarts/theme/red"
+import "echarts/theme/macarons2"
 import { CreditCard } from "lucide-react"
 import RcResizeObserver from "rc-resize-observer"
 import { Button } from "@/components/ui/button"
@@ -132,7 +132,7 @@ const Summary = () => {
           option={options}
           notMerge={true}
           lazyUpdate={true}
-          theme={"red"}
+          theme={"macarons2"}
           // onChartReady={this.onChartReadyCallback}
           // onEvents={EventsDict}
           // opts={}
@@ -153,6 +153,7 @@ const Overview = () => {
     >
       <ProCard
         title="数据概览"
+        headStyle={{ fontSize: 14, fontWeight: 600 }}
         extra={
           date.getFullYear() +
           "年" +

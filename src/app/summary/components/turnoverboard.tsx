@@ -40,9 +40,12 @@ echarts.use([
 let option: EChartsOption = {
   tooltip: {
     trigger: "item",
+    backgroundColor: "rgba(250,250,250,0.7)",
   },
   legend: {
-    top: "5%",
+    // top: "10%",
+    right: 10,
+    bottom: "1%",
     left: "center",
   },
   series: [
@@ -50,16 +53,13 @@ let option: EChartsOption = {
       name: "Access From",
       type: "pie",
       radius: ["40%", "70%"],
-      avoidLabelOverlap: false,
+      avoidLabelOverlap: true,
       itemStyle: {
         borderRadius: 10,
         borderColor: "#fff",
         borderWidth: 2,
       },
-      label: {
-        show: false,
-        position: "center",
-      },
+
       emphasis: {
         label: {
           show: true,
@@ -67,11 +67,11 @@ let option: EChartsOption = {
           fontWeight: "bold",
         },
       },
-      labelLine: {
-        show: false,
-      },
+      // labelLine: {
+      //   show: false,
+      // },
       data: [
-        { value: 1048, name: "Search Engine" },
+        { value: 1048, name: "手机" },
         { value: 735, name: "Direct" },
         { value: 580, name: "Email" },
         { value: 484, name: "Union Ads" },
@@ -94,15 +94,18 @@ const TurnoverBoard = () => {
   // fetchData()
   //   }, [])
   return (
-    <>
-      <ReactEChartsCore
-        option={option}
-        echarts={echarts}
-        notMerge={true}
-        lazyUpdate={true}
-        theme={"red"}
-      />
-    </>
+    <Card>
+      <CardContent>
+        <ReactEChartsCore
+          option={option}
+          echarts={echarts}
+          notMerge={true}
+          lazyUpdate={true}
+          theme={"red"}
+          // className="mb-8 mt-8"
+        />
+      </CardContent>
+    </Card>
   )
 }
 
