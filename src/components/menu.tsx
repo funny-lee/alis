@@ -1,9 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { notFound } from "next/navigation"
+import Image from "next/image"
+import { notFound, usePathname } from "next/navigation"
+import logo from "@/assets/logo.png"
 import type { WebviewWindow } from "@tauri-apps/api/window"
-import { Globe, Maximize, Mic, X } from "lucide-react"
+import { Building2, Globe, Maximize, Mic, X } from "lucide-react"
 import { getCurrentUser } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import {
@@ -53,6 +55,15 @@ export function Menu() {
 
   return (
     <Menubar className="rounded-none border-b border-none pl-2 lg:pl-4">
+      <MenubarMenu>
+        <div className="inline-flex h-fit w-fit items-center text-cyan-500">
+          {usePathname() === "/" || usePathname() === "/examples/music" ? (
+            <Image src={logo} alt="logo" width={40} />
+          ) : (
+            <Building2 className="h-5 w-5" />
+          )}
+        </div>
+      </MenubarMenu>
       <MenubarMenu>
         <MenubarTrigger className="w-fit font-bold ">主页</MenubarTrigger>
         <MenubarContent>

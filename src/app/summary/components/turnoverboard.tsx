@@ -13,7 +13,6 @@ import {
 import * as echarts from "echarts/core"
 import { LabelLayout, UniversalTransition } from "echarts/features"
 import { CanvasRenderer } from "echarts/renderers"
-import "echarts/theme/red"
 import { CreditCard } from "lucide-react"
 import RcResizeObserver from "rc-resize-observer"
 import { Button } from "@/components/ui/button"
@@ -24,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import "@/components/walden"
 
 echarts.use([
   DatasetComponent,
@@ -101,7 +101,7 @@ const TurnoverBoard = () => {
           echarts={echarts}
           notMerge={true}
           lazyUpdate={true}
-          theme={"red"}
+          theme={"walden"}
           // className="mb-8 mt-8"
         />
       </CardContent>

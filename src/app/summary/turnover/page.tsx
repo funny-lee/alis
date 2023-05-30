@@ -16,7 +16,6 @@ import {
 } from "echarts/components"
 import * as echarts from "echarts/core"
 import { CanvasRenderer } from "echarts/renderers"
-import "echarts/theme/macarons"
 import { CreditCard } from "lucide-react"
 import RcResizeObserver from "rc-resize-observer"
 import { Button } from "@/components/ui/button"
@@ -27,6 +26,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import "@/components/walden"
 
 echarts.use([
   TooltipComponent,
@@ -38,12 +38,13 @@ echarts.use([
 //use echarts-for-react bachart and line chart to show the sales of different
 let option: EChartsCoreOption = {
   tooltip: {
+    backgroundColor: "rgba(250,250,250,0.7)",
     trigger: "axis",
     axisPointer: {
       type: "cross",
-      crossStyle: {
-        color: "#999",
-      },
+      // crossStyle: {
+      //   color: "#999",
+      // },
     },
   },
   toolbox: {
@@ -156,11 +157,7 @@ const ParetoAnalysis = () => {
         <CardDescription>辅助发现重要商品</CardDescription>
       </CardHeader>
       <CardContent>
-        <ReactEChartsCore
-          echarts={echarts}
-          option={option}
-          theme={"macarons"}
-        />
+        <ReactEChartsCore echarts={echarts} option={option} theme={"walden"} />
       </CardContent>
     </Card>
   )

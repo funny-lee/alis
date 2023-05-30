@@ -1,64 +1,32 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import {
-  GithubFilled,
-  InfoCircleFilled,
-  QuestionCircleFilled,
-} from "@ant-design/icons"
-import { DownOutlined, PlusOutlined } from "@ant-design/icons"
-import {
-  PageContainer,
-  ProCard,
-  ProColumns,
-  ProLayout,
-  ProSettings,
-} from "@ant-design/pro-components"
-import { ProTable } from "@ant-design/pro-components"
+//入库单
+import { DownOutlined } from "@ant-design/icons"
+import { ProColumns, ProTable } from "@ant-design/pro-components"
 import { invoke } from "@tauri-apps/api/tauri"
-import { useAntdTable, useRequest } from "ahooks"
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Row,
-  Select,
-  Space,
-  Table,
-  Tag,
-  message,
-} from "antd"
-import type { ColumnsType } from "antd/es/table"
-import Dropdown from "antd/lib/dropdown/dropdown"
+import { Button, Space } from "antd"
+import { ChevronDown } from "lucide-react"
 import { useSession } from "next-auth/react"
-import NewPoForm from "@/components/newpoform"
 import { UserAccountNav } from "@/components/user-account-nav"
+import NewWarehousing from "./components/newwarehousing"
 
-const { Option } = Select
-
-// import BasicLayout from "../app/BasicLayout";
-interface po_short {
-  purchase_id: number
-  purchase_time: string
-  worker_id: number
-  pay_status: string
+interface warehousing {
+  warehouse_id: number
+  warehousing_id: number
+  warehousing_time: string
+  warehousing_total_batch: number
+  po_id: number
+  total_batch: number
+  arrival_id: number
   key: string
-  po_details: po_detail[]
 }
-interface po_detail {
-  purchase_id: number
-  item_id: number
-  goods_id: number
-  goods_num: number
-}
+
 interface Result {
   total: number
-  list: po_short[]
+  list: warehousing[]
 }
 const getTableData = async (): Promise<Result> => {
-  const res = await invoke("show_purchase")
+  const res = await invoke("show_all_warehousing")
   const res_1 = JSON.parse(JSON.parse(JSON.stringify(res)))
   return {
     total: res_1.length,
@@ -66,46 +34,43 @@ const getTableData = async (): Promise<Result> => {
   }
 }
 
-const columns: ProColumns<po_short>[] = [
-  Table.SELECTION_COLUMN,
-  Table.EXPAND_COLUMN,
+const columns: ProColumns<warehousing>[] = [
   {
-    title: "采购单号",
-    dataIndex: "purchase_id",
-    key: "purchase_id",
+    title: "入库单号",
+    dataIndex: "warehousing_id",
+    key: "warehousing_id",
     render: (text) => <a>{text}</a>,
   },
   {
-    title: "采购时间",
-    dataIndex: "purchase_time",
-    key: "purchase_time",
-    sorter: (a, b) => a.purchase_time.localeCompare(b.purchase_time),
+    title: "预期入库时间",
+    dataIndex: "warehousing_time",
+    key: "warehousing_time",
+    sorter: (a, b) => a.warehousing_time.localeCompare(b.warehousing_time),
   },
   {
-    title: "采购员工号",
-    dataIndex: "worker_id",
-    key: "worker_id",
+    title: "入库总批次",
+    dataIndex: "warehousing_total_batch",
+    key: "warehousing_total_batch",
   },
   {
-    title: "支付状态",
-    dataIndex: "pay_status",
-    key: "pay_status",
-    render: (pay_status) =>
-      pay_status === "Paid" ? (
-        <Tag color="green">{pay_status}</Tag>
-      ) : (
-        <Tag color="volcano">{pay_status}</Tag>
-      ),
+    title: "当前批次",
+    dataIndex: "total_batch",
+    key: "total_batch",
+  },
+  {
+    title: "采购单号",
+    dataIndex: "po_id",
+    key: "po_id",
+  },
+  {
+    title: "到货单号",
+    dataIndex: "arrival_id",
+    key: "arrival_id",
   },
 ]
 
-const PO = () => {
+const WarehousingPage = () => {
   const { data: session, status } = useSession()
-
-  //   if (status === "authenticated") {
-  //     return <p>Signed in as {session.user.email}</p>
-  //   }
-
   if (!session) {
     return <p>加载中</p>
   }
@@ -126,7 +91,7 @@ const PO = () => {
         </div>
       </div>
       <div className="  w-full  rounded-md border  ">
-        <ProTable<po_short>
+        <ProTable<warehousing>
           columns={columns}
           bordered
           request={async (params = {}, sort, filter) => {
@@ -140,12 +105,12 @@ const PO = () => {
             }
           }}
           rowKey="purchase_id"
-          search={false}
+          search={{ labelWidth: "auto" }}
           pagination={{
             showQuickJumper: true,
           }}
           dateFormatter="string"
-          headerTitle="采购表"
+          headerTitle="入库表"
           editable={{
             type: "multiple",
           }}
@@ -190,46 +155,12 @@ const PO = () => {
               导出数据
               <DownOutlined />
             </Button>,
-            <NewPoForm key={"newpoform"} />,
+            <NewWarehousing key={"newwarehousing"} />,
           ]}
-          expandable={{
-            expandedRowRender: (record) => {
-              console.log(record)
-              return (
-                <ProTable<po_detail>
-                  columns={[
-                    {
-                      title: "序号",
-                      dataIndex: "item_id",
-                      key: "item_id",
-                    },
-                    {
-                      title: "商品编号",
-                      dataIndex: "goods_id",
-                      key: "goods_id",
-                    },
-                    {
-                      title: "商品数量",
-                      dataIndex: "goods_num",
-                      key: "goods_num",
-                    },
-                  ]}
-                  dataSource={record.po_details}
-                  headerTitle={false}
-                  search={false}
-                  options={false}
-                  pagination={false}
-                />
-              )
-            },
-          }}
         />
       </div>
     </div>
   )
 }
 
-const ShowPO = () => {
-  return <PO />
-}
-export default ShowPO
+export default WarehousingPage

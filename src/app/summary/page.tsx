@@ -14,7 +14,6 @@ import {
 } from "echarts/components"
 import * as echarts from "echarts/core"
 import { CanvasRenderer } from "echarts/renderers"
-import "echarts/theme/macarons2"
 import { CreditCard } from "lucide-react"
 import RcResizeObserver from "rc-resize-observer"
 import { Button } from "@/components/ui/button"
@@ -25,6 +24,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import "@/components/walden"
 import TurnoverBoard from "./components/turnoverboard"
 
 echarts.use([
@@ -132,7 +132,7 @@ const Summary = () => {
           option={options}
           notMerge={true}
           lazyUpdate={true}
-          theme={"macarons2"}
+          theme={"walden"}
           // onChartReady={this.onChartReadyCallback}
           // onEvents={EventsDict}
           // opts={}
@@ -152,7 +152,7 @@ const Overview = () => {
       }}
     >
       <ProCard
-        title="数据概览"
+        title={<h1>数据概览</h1>}
         headStyle={{ fontSize: 14, fontWeight: 600 }}
         extra={
           date.getFullYear() +

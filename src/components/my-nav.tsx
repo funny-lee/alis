@@ -1,6 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
+import { Tag } from "antd"
 import {
   MenubarContent,
   MenubarMenu,
@@ -34,6 +35,10 @@ const mypages = [
     href: "/login",
     name: "登录",
   },
+  {
+    href: "/warehousing",
+    name: "入库管理",
+  },
 ]
 
 interface MyNavProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -44,6 +49,9 @@ export function MyPagesNav({ className, ...props }: MyNavProps) {
   return (
     <MenubarMenu>
       <MenubarTrigger>
+        <span className="rounded-md  px-1.5 py-0.5 text-xs font-medium leading-none text-[#000000] no-underline group-hover:no-underline">
+          <Tag color="blue">快速跳转</Tag>
+        </span>
         {mypages.find((u) => u.href === pathname)?.name}
       </MenubarTrigger>
       <MenubarContent forceMount>

@@ -17,8 +17,15 @@ import {
   ProLayout,
   ProSettings,
 } from "@ant-design/pro-components"
-import { Buy, ChartPieOne, Home, MultiTriangularFour } from "@icon-park/react"
+import {
+  Buy,
+  ChartPieOne,
+  H,
+  Home,
+  MultiTriangularFour,
+} from "@icon-park/react"
 import collapse from "antd/es/collapse"
+import { Header } from "antd/es/layout/layout"
 import { settings } from "cluster"
 import { SessionProvider, useSession } from "next-auth/react"
 import { fontMono, fontSans } from "@/lib/fonts"
@@ -45,27 +52,28 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <SessionProvider>
-    <html lang="en" suppressHydrationWarning>
-      {/* <Head children={undefined} /> */}
-      <body className="bg-transparent font-sans antialiased scrollbar-none">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="h-screen overflow-clip rounded-lg border">
-            <Menu />
-            <div
-              className={cn(
-                "h-screen overflow-auto border-t bg-background pb-8",
-                "scrollbar-none"
-                // "scrollbar scrollbar-track-rounded-lg scrollbar-thumb-rounded-lg scrollbar-thumb-gray-900 scrollbar-track-gray-100"
-              )}
-            >
-              {children}
-              <Toaster />
+      <html lang="en" suppressHydrationWarning>
+        {/* <Head children={undefined} /> */}
+        <body className="bg-transparent font-sans antialiased scrollbar-none">
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="h-screen overflow-clip rounded-lg border">
+              <Menu />
+
+              <div
+                className={cn(
+                  "h-screen overflow-auto border-t bg-background pb-8",
+                  "scrollbar-none"
+                  // "scrollbar scrollbar-track-rounded-lg scrollbar-thumb-rounded-lg scrollbar-thumb-gray-900 scrollbar-track-gray-100"
+                )}
+              >
+                {children}
+                <Toaster />
+              </div>
             </div>
-          </div>
-        </ThemeProvider>
-        <StyleSwitcher />
-      </body>
-    </html>
+          </ThemeProvider>
+          <StyleSwitcher />
+        </body>
+      </html>
     </SessionProvider>
   )
 }

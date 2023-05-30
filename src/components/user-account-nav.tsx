@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { User } from "next-auth"
 import { signOut } from "next-auth/react"
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,7 +56,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
             })
           }}
         >
-          Sign out
+          退出
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
