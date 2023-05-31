@@ -50,7 +50,7 @@ let option: EChartsOption = {
   },
   series: [
     {
-      name: "Access From",
+      name: "占有量",
       type: "pie",
       radius: ["40%", "70%"],
       avoidLabelOverlap: true,
@@ -71,11 +71,11 @@ let option: EChartsOption = {
       //   show: false,
       // },
       data: [
-        { value: 1048, name: "手机" },
-        { value: 735, name: "Direct" },
-        { value: 580, name: "Email" },
-        { value: 484, name: "Union Ads" },
-        { value: 300, name: "Video Ads" },
+        { value: 1048, name: "食品饮品" },
+        { value: 735, name: "电子设备" },
+        { value: 580, name: "文化用品" },
+        { value: 484, name: "生活用品" },
+        { value: 300, name: "五金器件" },
       ],
     },
   ],

@@ -12,7 +12,7 @@ import {
 
 const mypages = [
   {
-    href: "/hello",
+    href: "/",
     name: "主页",
   },
   {
@@ -27,10 +27,7 @@ const mypages = [
     href: "/summary",
     name: "数据汇总",
   },
-  {
-    href: "/quality-check",
-    name: "质检管理",
-  },
+
   {
     href: "/login",
     name: "登录",
@@ -38,6 +35,10 @@ const mypages = [
   {
     href: "/warehousing",
     name: "入库管理",
+  },
+  {
+    href: "/so",
+    name: "发运管理",
   },
 ]
 

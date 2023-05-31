@@ -5,7 +5,11 @@
 mod dal;
 mod error;
 mod service;
-use crate::service::{arrival::show_all_arrival, purchase::show_purchase};
+use crate::service::{
+    arrival::show_all_arrival,
+    goods::show_goods,
+    purchase::{delete_purchase, new_purchase, show_purchase},
+};
 use eyre::Result;
 use lazy_static::lazy_static;
 use sqlx::postgres::PgPool;
@@ -55,7 +59,13 @@ async fn main() -> Result<()> {
     init(db_uri).await?;
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![show_purchase, show_all_arrival])
+        .invoke_handler(tauri::generate_handler![
+            show_purchase,
+            new_purchase,
+            delete_purchase,
+            show_all_arrival,
+            show_goods,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
     Ok(())

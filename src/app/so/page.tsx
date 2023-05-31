@@ -144,7 +144,7 @@ const columns: ProColumns<po_short>[] = [
   },
 ]
 
-const PO = () => {
+const SO = () => {
   const { data: session, status } = useSession()
   const actionRef = useRef<ActionType>()
   //   if (status === "authenticated") {
@@ -198,21 +198,8 @@ const PO = () => {
               return true
             })
             res.total = res.list.length
-            console.log(res.list)
-            res.list.forEach((item) => {
-              data2print.purchase.push({
-                purchase_id: item.purchase_id,
-                purchase_time: item.purchase_time,
-                worker_id: item.worker_id,
-                pay_status: item.pay_status,
-                po_details: item.po_details,
-                goods_id: item.po_details[0].goods_id,
-                goods_name: item.po_details[0].goods_name,
-                goods_num: item.po_details[0].goods_num,
-                goods_price: item.po_details[0].goods_price,
-              })
-            })
-
+            console.log(res.total)
+            data2print.purchase = res.list
             return {
               data: res.list,
               total: res.total,
@@ -251,7 +238,7 @@ const PO = () => {
             showQuickJumper: true,
           }}
           dateFormatter="string"
-          headerTitle="采购表"
+          headerTitle="发运表"
           editable={{
             type: "multiple",
           }}
@@ -344,7 +331,7 @@ const PO = () => {
   )
 }
 
-const ShowPO = () => {
-  return <PO />
+const ShowSO = () => {
+  return <SO />
 }
-export default ShowPO
+export default ShowSO

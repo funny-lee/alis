@@ -38,6 +38,16 @@ impl ArrivalManager {
 		.await?;
         Ok(arrivals)
     }
+    async fn delete( pool: &PgPool,arrival_id:i32) -> Result<bool> {
+        let mut tx = pool.begin().await?;
+
+        sqlx::query("DELETE FROM arrival WHERE arrival_id = $1 RETURNING arrival_id")
+            .bind(arrival_id)
+            .fetch_one(&mut tx)
+            .await?;
+        tx.commit().await?;
+        Ok(true)
+    }
 }
 
 #[async_trait]
@@ -63,14 +73,5 @@ impl Manage for Arrival {
         tx.commit().await?;
         Ok(true)
     }
-    async fn delete(&self, pool: &PgPool) -> Result<bool> {
-        let mut tx = pool.begin().await?;
-
-        sqlx::query("DELETE FROM arrival WHERE arrival_id = $1 RETURNING arrival_id")
-            .bind(self.arrival_id)
-            .fetch_one(&mut tx)
-            .await?;
-        tx.commit().await?;
-        Ok(true)
-    }
+    
 }

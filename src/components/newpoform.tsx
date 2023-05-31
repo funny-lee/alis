@@ -1,16 +1,29 @@
+import { useRef } from "react"
 import { DownOutlined, PlusOutlined } from "@ant-design/icons"
 import {
   ModalForm,
   ProForm,
   ProFormDateRangePicker,
+  ProFormInstance,
   ProFormSelect,
   ProFormText,
 } from "@ant-design/pro-components"
+import { invoke } from "@tauri-apps/api/tauri"
 import { Button, Form, message } from "antd"
 // import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 
+const newPurchase = async (po) => {
+  const res = await invoke("new_purchase", po)
+  console.log(res)
+  return res
+}
 const NewPoForm = () => {
+  const formRef = useRef<ProFormInstance>()
+
+  const onFill = () => {
+    formRef?.current?.setFieldsValue({})
+  }
   const [form] = Form.useForm<{
     purchase_id: number
     purchase_time: string
@@ -57,28 +70,41 @@ const NewPoForm = () => {
           placeholder="采购单号"
         />
 
-        {/* <ProFormText
-					width="md"
-					name="contract"
-					label="创建时间"
-					placeholder="请输入名称"
-				/> */}
-        <ProFormDateRangePicker name="contractTime" label="预计到货时间" />
+        <ProFormDateRangePicker name="expectTime" label="预计到货时间" />
       </ProForm.Group>
+      <ProFormText
+        width="md"
+        name="createtime"
+        label="创建时间"
+        placeholder="请输入名称"
+      />
+      <ProForm.Group></ProForm.Group>
       <ProForm.Group>
         <ProFormSelect
-          request={async () => [
-            {
-              value: "chapter",
-              label: "商品1",
-            },
-          ]}
+          params={{}} // 传递给后端的参数
+          request={async (params) => {
+            const res1 = await invoke("getGoodsList")
+            const res2 = JSON.parse(JSON.parse(JSON.stringify(res1)))
+            const res3 = res2.data.map((item) => {
+              console.log(item)
+              return {
+                label: item.goods_name,
+                value: item.goods_id,
+              }
+            })
+            return res3
+          }}
           width="sm"
-          name="useMode"
+          name="goods_choose"
           label="商品选择"
         />
 
-        <ProFormText width="sm" name="id" label="总金额" placeholder={"￥"} />
+        <ProFormText
+          width="sm"
+          name="total_money"
+          label="总金额"
+          placeholder={"￥"}
+        />
       </ProForm.Group>
     </ModalForm>
   )

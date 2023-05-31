@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use eyre::Result;
-use sqlx::postgres::PgPool;
+use sqlx::{postgres::PgPool, Pool, Postgres};
 
 #[derive(Debug, Clone, Default, sqlx::FromRow, serde::Serialize, serde::Deserialize, Builder)]
 pub struct PoShort {
@@ -26,6 +26,8 @@ pub struct PoDetail {
     pub goods_id: i32,
     #[builder(setter(into))]
     pub goods_num: i32,
+    #[builder(setter(into))]
+    pub goods_name: String,
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Builder)]
 pub struct Po {
@@ -51,7 +53,7 @@ impl PoManager {
         .await?;
         for po_short in &po_shorts {
             let po_details: Vec<PoDetail> = sqlx::query_as(
-                "SELECT item_id, purchase_id, goods_id, goods_num FROM purchase_detail WHERE purchase_id = $1")
+                "SELECT item_id, purchase_id, purchase_detail.goods_id, goods_num ,goods_name FROM purchase_detail,goods WHERE purchase_detail.goods_id = goods.goods_id and purchase_id = $1")
                 .bind(po_short.purchase_id)
             .fetch_all(&mut tx)
             .await?;
@@ -60,6 +62,15 @@ impl PoManager {
         }
         tx.commit().await?;
         Ok((po_shorts, po_all_detail))
+    }
+    pub async fn delete(pool: &PgPool, purchase_id: i32) -> Result<bool> {
+        let mut tx = pool.begin().await?;
+        sqlx::query("DELETE FROM purchase WHERE purchase_id = $1")
+            .bind(purchase_id)
+            .execute(&mut tx)
+            .await?;
+        tx.commit().await?;
+        Ok(true)
     }
 }
 
@@ -96,15 +107,6 @@ impl Manage for Po {
     async fn update(&self, my_query: &str, pool: &PgPool) -> Result<bool> {
         let mut tx = pool.begin().await?;
         sqlx::query(my_query).execute(&mut tx).await?;
-        tx.commit().await?;
-        Ok(true)
-    }
-    async fn delete(&self, pool: &PgPool) -> Result<bool> {
-        let mut tx = pool.begin().await?;
-        sqlx::query("DELETE FROM purchase WHERE purchase_id = $1")
-            .bind(self.po_short.purchase_id)
-            .execute(&mut tx)
-            .await?;
         tx.commit().await?;
         Ok(true)
     }

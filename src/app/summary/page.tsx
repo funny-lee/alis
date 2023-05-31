@@ -212,7 +212,7 @@ const Overview = () => {
           <StatisticCard title="流量走势" chart={<Summary />} />
         </ProCard>
         <StatisticCard
-          title="流量占用情况"
+          title="货位情况"
           chart={
             <>
               <TurnoverBoard />

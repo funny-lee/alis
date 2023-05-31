@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { notFound, usePathname } from "next/navigation"
 import logo from "@/assets/logo.png"
 import type { WebviewWindow } from "@tauri-apps/api/window"
@@ -80,94 +81,16 @@ export function Menu() {
       <MenubarMenu>
         <MenubarTrigger className="relative">文件管理</MenubarTrigger>
         <MenubarContent>
-          <MenubarSub>
-            <MenubarSubTrigger>上传文件</MenubarSubTrigger>
-            <MenubarSubContent className="w-[230px]">
-              <MenubarItem>图片</MenubarItem>
-
-              <MenubarItem>文档</MenubarItem>
-              <MenubarItem>Playlist Folder</MenubarItem>
-              <MenubarItem disabled>Genius Playlist</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
           <MenubarItem>
-            Open Stream URL... <MenubarShortcut>⌘U</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            Close Window <MenubarShortcut>⌘W</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSeparator />
-          <MenubarSub>
-            <MenubarSubTrigger>Library</MenubarSubTrigger>
-            <MenubarSubContent>
-              <MenubarItem>Update Cloud Library</MenubarItem>
-              <MenubarItem>Update Genius</MenubarItem>
-              <MenubarSeparator />
-              <MenubarItem>Organize Library...</MenubarItem>
-              <MenubarItem>Export Library...</MenubarItem>
-              <MenubarSeparator />
-              <MenubarItem>Import Playlist...</MenubarItem>
-              <MenubarItem disabled>Export Playlist...</MenubarItem>
-              <MenubarItem>Show Duplicate Items</MenubarItem>
-              <MenubarSeparator />
-              <MenubarItem>Get Album Artwork</MenubarItem>
-              <MenubarItem disabled>Get Track Names</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-          <MenubarItem>
-            Import... <MenubarShortcut>⌘O</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled>Burn Playlist to Disc...</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem>
-            Show in Finder <MenubarShortcut>⇧⌘R</MenubarShortcut>{" "}
-          </MenubarItem>
-          <MenubarItem>Convert</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem>Page Setup...</MenubarItem>
-          <MenubarItem disabled>
-            Print... <MenubarShortcut>⌘P</MenubarShortcut>
+            <Link href="/filemanage">上传文件</Link>
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
         <MenubarTrigger>人员管理</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem disabled>
-            Undo <MenubarShortcut>⌘Z</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled>
-            Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem disabled>
-            Cut <MenubarShortcut>⌘X</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled>
-            Copy <MenubarShortcut>⌘C</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled>
-            Paste <MenubarShortcut>⌘V</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSeparator />
           <MenubarItem>
-            Select All <MenubarShortcut>⌘A</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled>
-            Deselect All <MenubarShortcut>⇧⌘A</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem>
-            Smart Dictation...{" "}
-            <MenubarShortcut>
-              <Mic className="h-4 w-4" />
-            </MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            Emoji & Symbols{" "}
-            <MenubarShortcut>
-              <Globe className="h-4 w-4" />
-            </MenubarShortcut>
+            <Link href="/workermanage">管理页面</Link>
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
@@ -175,17 +98,18 @@ export function Menu() {
       <MenubarMenu>
         <MenubarTrigger className="hidden md:block">账号管理</MenubarTrigger>
         <MenubarContent forceMount>
-          <MenubarLabel inset>Switch Account</MenubarLabel>
+          <MenubarLabel inset>切换账号</MenubarLabel>
           <MenubarSeparator />
-          <MenubarRadioGroup value="benoit">
-            <MenubarRadioItem value="andy">Andy</MenubarRadioItem>
-            <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
-            <MenubarRadioItem value="Luis">Luis</MenubarRadioItem>
+          <MenubarRadioGroup value="zhangsan">
+            <MenubarRadioItem value="zhangsan">张三</MenubarRadioItem>
+            <MenubarRadioItem value="lisi">李四</MenubarRadioItem>
+            <MenubarRadioItem value="wangfei">王飞</MenubarRadioItem>
           </MenubarRadioGroup>
           <MenubarSeparator />
-          <MenubarItem inset>Manage Famliy...</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem inset>Add Account...</MenubarItem>
+
+          <MenubarItem inset>
+            <Link href="/accountsmanage">账号管理</Link>
+          </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <MyPagesNav />

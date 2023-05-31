@@ -9,6 +9,7 @@ export const exportWordDocx = (
   docxData: any,
   fileName: string | undefined
 ) => {
+  console.log(docxData)
   // 读取并获得模板文件的二进制内容
   JSZipUtils.getBinaryContent(
     demoUrl,
