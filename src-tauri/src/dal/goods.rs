@@ -14,7 +14,7 @@ pub struct Goods {
     #[builder(setter(into))]
     pub goods_name: String,
     #[builder(setter(into))]
-    pub goods_price: i32,
+    pub goods_price: f32,
     #[builder(setter(into))]
     pub goods_size: String,
     #[builder(setter(into))]
@@ -48,37 +48,37 @@ impl GoodsManager {
         .await?;
         Ok(goods)
     }
-    // pub async fn insert(&self, goods: &Goods) -> Result<()> {
-    //     let mut tx = self.pool.begin().await?;
-    //     sqlx::query(
-    //         "INSERT INTO goods (supplier_id, goods_name, goods_price, goods_size, goods_sku) VALUES ($1, $2, $3, $4, $5)",
-    //     )
-    //     .bind(goods.supplier_id)
-    //     .bind(&goods.goods_name)
-    //     .bind(goods.goods_price)
-    //     .bind(&goods.goods_size)
-    //     .bind(&goods.goods_sku)
-    //     .execute(&mut tx)
-    //     .await?;
-    //     tx.commit().await?;
-    //     Ok(())
-    // }
-    // pub async fn update(&self, goods: &Goods) -> Result<()> {
-    //     let mut tx = self.pool.begin().await?;
-    //     sqlx::query(
-    //         "UPDATE goods SET supplier_id = $1, goods_name = $2, goods_price = $3, goods_size = $4, goods_sku = $5 WHERE goods_id = $6",
-    //     )
-    //     .bind(goods.supplier_id)
-    //     .bind(&goods.goods_name)
-    //     .bind(goods.goods_price)
-    //     .bind(&goods.goods_size)
-    //     .bind(&goods.goods_sku)
-    //     .bind(goods.goods_id)
-    //     .execute(&mut tx)
-    //     .await?;
-    //     tx.commit().await?;
-    //     Ok(())
-    // }
+    pub async fn insert(&self, goods: &Goods) -> Result<()> {
+        let mut tx = self.pool.begin().await?;
+        sqlx::query(
+            "INSERT INTO goods (supplier_id, goods_name, goods_price, goods_size, goods_sku) VALUES ($1, $2, $3, $4, $5)",
+        )
+        .bind(goods.supplier_id)
+        .bind(&goods.goods_name)
+        .bind(goods.goods_price)
+        .bind(&goods.goods_size)
+        .bind(&goods.goods_sku)
+        .execute(&mut tx)
+        .await?;
+        tx.commit().await?;
+        Ok(())
+    }
+    pub async fn update(&self, goods: &Goods) -> Result<()> {
+        let mut tx = self.pool.begin().await?;
+        sqlx::query(
+            "UPDATE goods SET supplier_id = $1, goods_name = $2, goods_price = $3, goods_size = $4, goods_sku = $5 WHERE goods_id = $6",
+        )
+        .bind(goods.supplier_id)
+        .bind(&goods.goods_name)
+        .bind(goods.goods_price)
+        .bind(&goods.goods_size)
+        .bind(&goods.goods_sku)
+        .bind(goods.goods_id)
+        .execute(&mut tx)
+        .await?;
+        tx.commit().await?;
+        Ok(())
+    }
     pub async fn delete(&self, goods_id: i32) -> Result<()> {
         let mut tx = self.pool.begin().await?;
         sqlx::query("DELETE FROM goods WHERE goods_id = $1")

@@ -1,4 +1,6 @@
-import { useRef } from "react"
+"use client"
+
+import { use, useEffect, useRef, useState } from "react"
 import { DownOutlined, PlusOutlined } from "@ant-design/icons"
 import {
   ModalForm,
@@ -10,6 +12,7 @@ import {
 } from "@ant-design/pro-components"
 import { invoke } from "@tauri-apps/api/tauri"
 import { Button, Form, message } from "antd"
+import { on } from "events"
 // import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 
@@ -18,7 +21,32 @@ const newPurchase = async (po) => {
   console.log(res)
   return res
 }
+interface GoodsData {
+  label: string
+  value: string
+}
 const NewPoForm = () => {
+  const [goodsdata, setGoodsData] = useState<GoodsData[]>([])
+  useEffect(() => {
+    const fetchData = async () => {
+      const res1 = await invoke("show_goods")
+      const res2 = JSON.parse(JSON.parse(JSON.stringify(res1)))
+
+      const res3 = res2.reduce(
+        (acc: GoodsData[], cur: { goods_name: any; goods_id: any }) => {
+          acc.push({ label: cur.goods_name, value: cur.goods_id })
+          return acc
+        },
+        []
+      )
+      console.log(res3)
+      setGoodsData(res3)
+    }
+
+    fetchData().catch((err) => {
+      console.log(err)
+    })
+  }, [])
   const formRef = useRef<ProFormInstance>()
 
   const onFill = () => {
@@ -72,28 +100,23 @@ const NewPoForm = () => {
 
         <ProFormDateRangePicker name="expectTime" label="预计到货时间" />
       </ProForm.Group>
-      <ProFormText
-        width="md"
-        name="createtime"
-        label="创建时间"
-        placeholder="请输入名称"
-      />
-      <ProForm.Group></ProForm.Group>
+
+      <ProForm.Group>
+        <ProFormText
+          width="md"
+          name="worker_id"
+          label="工号"
+          disabled
+          initialValue={1}
+        />
+      </ProForm.Group>
       <ProForm.Group>
         <ProFormSelect
           params={{}} // 传递给后端的参数
-          request={async (params) => {
-            const res1 = await invoke("getGoodsList")
-            const res2 = JSON.parse(JSON.parse(JSON.stringify(res1)))
-            const res3 = res2.data.map((item) => {
-              console.log(item)
-              return {
-                label: item.goods_name,
-                value: item.goods_id,
-              }
-            })
-            return res3
+          request={async () => {
+            return goodsdata
           }}
+          initialValue={goodsdata}
           width="sm"
           name="goods_choose"
           label="商品选择"

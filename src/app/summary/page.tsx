@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/card"
 import "@/components/walden"
 import TurnoverBoard from "./components/turnoverboard"
+import ParetoAnalysis from "./turnover/page"
 
 echarts.use([
   TooltipComponent,
@@ -211,14 +212,24 @@ const Overview = () => {
           </ProCard>
           <StatisticCard title="流量走势" chart={<Summary />} />
         </ProCard>
-        <StatisticCard
-          title="货位情况"
-          chart={
-            <>
-              <TurnoverBoard />
-            </>
-          }
-        />
+        <ProCard split="horizontal">
+          <StatisticCard
+            title="货位情况"
+            chart={
+              <>
+                <TurnoverBoard />
+              </>
+            }
+          />
+          <StatisticCard
+            title="帕累托分析"
+            chart={
+              <>
+                <ParetoAnalysis />
+              </>
+            }
+          />
+        </ProCard>
       </ProCard>
     </RcResizeObserver>
   )

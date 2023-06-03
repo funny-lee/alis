@@ -1,7 +1,6 @@
 use crate::dal::{
     goods::{Goods, GoodsManager},
     manager::Manage,
-    po::{Po, PoDetail, PoManager},
 };
 use chrono::{DateTime, Utc};
 
@@ -18,7 +17,7 @@ pub async fn show_goods() -> Result<String, String> {
         // println!("Error: {}", reason);
         Err(reason.to_string())
     })?;
-    println!("{}", goods_json);
+    println!("aaaaaaaaaaaaaaaaa{}", goods_json);
     Ok(goods_json)
 }
 

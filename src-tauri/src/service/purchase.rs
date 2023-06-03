@@ -125,44 +125,42 @@ pub async fn fetch_po_bytime(
     Ok(wrapper_json)
 }
 
-#[tauri::command]
-pub async fn new_purchase(pool: &Pool<Postgres>, po: Po) -> Result<String, String> {
-    //create new po and return po_id
-    let mut tx = pool.begin().await.or_else(|reason| {
-        // println!("Error: {}", reason);
-        Err(reason.to_string())
-    })?;
-    let po_short = po.po_short;
-    let po_details = po.po_details;
-    let po_id:i32 = sqlx::query(
-        "INSERT INTO purchase (worker_id, purchase_time, pay_status) VALUES ($1, $2, $3) RETURNING purchase_id",
-    )
-    .bind(po_short.worker_id)
-    .bind(po_short.purchase_time)
-    .bind(po_short.pay_status)
-    .fetch_one(&mut tx)
-    .await.or_else(|reason| {
-        // println!("Error: {}", reason);
-        Err(reason.to_string())
-    })?
-    .get(0);
-    for po_detail in po_details {
-        sqlx::query(
-            "INSERT INTO purchase_detail (purchase_id, goods_id, goods_num) VALUES ($1, $2, $3)",
-        )
-        .bind(po_id)
-        .bind(po_detail.goods_id)
-        .bind(po_detail.goods_num)
-        .execute(&mut tx)
-        .await
-        .or_else(|reason| {
-            // println!("Error: {}", reason);
-            Err(reason.to_string())
-        })?;
-    }
-    tx.commit().await.or_else(|reason| {
-        // println!("Error: {}", reason);
-        Err(reason.to_string())
-    })?;
-    Ok(po_id.to_string())
-}
+// #[tauri::command]
+// pub async fn new_purchase(po: Po) -> Result<String, String> {
+//     let pool = crate::POOL.read().await;
+//     //create new po and return po_id
+//     let mut tx = pool.get_pool().begin().await;
+//     let po_short = po.po_short;
+//     let po_details = po.po_details;
+//     let po_id:i32 = sqlx::query(
+//         "INSERT INTO purchase (worker_id, purchase_time, pay_status) VALUES ($1, $2, $3) RETURNING purchase_id",
+//     )
+//     .bind(po_short.worker_id)
+//     .bind(po_short.purchase_time)
+//     .bind(po_short.pay_status)
+//     .fetch_one(&mut tx)
+//     .await.or_else(|reason| {
+//         // println!("Error: {}", reason);
+//         Err(reason.to_string())
+//     })?
+//     .get(0);
+//     for po_detail in po_details {
+//         sqlx::query(
+//             "INSERT INTO purchase_detail (purchase_id, goods_id, goods_num) VALUES ($1, $2, $3)",
+//         )
+//         .bind(po_id)
+//         .bind(po_detail.goods_id)
+//         .bind(po_detail.goods_num)
+//         .execute(&mut tx)
+//         .await
+//         .or_else(|reason| {
+//             // println!("Error: {}", reason);
+//             Err(reason.to_string())
+//         })?;
+//     }
+//     tx?.commit().await.or_else(|reason| {
+//         // println!("Error: {}", reason);
+//         Err(reason.to_string())
+//     })?;
+//     Ok(po_id.to_string())
+// }

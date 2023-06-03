@@ -8,7 +8,7 @@ mod service;
 use crate::service::{
     arrival::show_all_arrival,
     goods::show_goods,
-    purchase::{delete_purchase, new_purchase, show_purchase},
+    purchase::{delete_purchase, show_purchase},
 };
 use eyre::Result;
 use lazy_static::lazy_static;
@@ -61,7 +61,6 @@ async fn main() -> Result<()> {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             show_purchase,
-            new_purchase,
             delete_purchase,
             show_all_arrival,
             show_goods,

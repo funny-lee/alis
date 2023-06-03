@@ -143,13 +143,17 @@ const columns: ProColumns<po_short>[] = [
     },
   },
 ]
-
+interface GoodsData {
+  label: string
+  value: string
+}
 const PO = () => {
   const { data: session, status } = useSession()
   const actionRef = useRef<ActionType>()
   //   if (status === "authenticated") {
   //     return <p>Signed in as {session.user.email}</p>
   //   }
+
   let date = new Date()
   if (!session) {
     return <p>加载中</p>
@@ -158,7 +162,30 @@ const PO = () => {
     year: date.getFullYear(),
     month: date.getMonth() + 1,
     day: date.getDate(),
-    purchase: [],
+    purchase: [
+      {
+        purchase_id: 123456789,
+        purchase_time: "2021-10-10",
+        worker_id: 19,
+        pay_status: "Paid",
+        goods_id: 12,
+        goods_name: "商品1",
+        goods_num: 10,
+        goods_price: 100,
+        goods_total: 1000,
+      },
+      {
+        purchase_id: 123499789,
+        purchase_time: "2022-03-19",
+        worker_id: 19,
+        pay_status: "Paid",
+        goods_id: 4,
+        goods_name: "商品2",
+        goods_num: 10,
+        goods_price: 100,
+        goods_total: 1000,
+      },
+    ],
     checker: "检查员1",
     waremanager: "张三",
     manager: "刘北",
@@ -199,19 +226,6 @@ const PO = () => {
             })
             res.total = res.list.length
             console.log(res.list)
-            res.list.forEach((item) => {
-              data2print.purchase.push({
-                purchase_id: item.purchase_id,
-                purchase_time: item.purchase_time,
-                worker_id: item.worker_id,
-                pay_status: item.pay_status,
-                po_details: item.po_details,
-                goods_id: item.po_details[0].goods_id,
-                goods_name: item.po_details[0].goods_name,
-                goods_num: item.po_details[0].goods_num,
-                goods_price: item.po_details[0].goods_price,
-              })
-            })
 
             return {
               data: res.list,
