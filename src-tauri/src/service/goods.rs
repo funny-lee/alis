@@ -17,7 +17,7 @@ pub async fn show_goods() -> Result<String, String> {
         // println!("Error: {}", reason);
         Err(reason.to_string())
     })?;
-    println!("aaaaaaaaaaaaaaaaa{}", goods_json);
+    // println!("aaaaaaaaaaaaaaaaa{}", goods_json);
     Ok(goods_json)
 }
 
@@ -31,3 +31,22 @@ pub async fn show_goods() -> Result<String, String> {
 //     })?;
 //     Ok(result.to_string())
 // }
+
+#[tauri::command(async)]
+pub async fn get_goods_by_supplier(supplier_id: i32) -> Result<String, String> {
+    let pool = crate::POOL.read().await;
+    let goods_manager = GoodsManager::new(pool.get_pool());
+    let goods = goods_manager
+        .get_by_supplier_id(supplier_id)
+        .await
+        .or_else(|reason| {
+            // println!("Error: {}", reason);
+            Err(reason.to_string())
+        })?;
+    let goods_json = serde_json::to_string(&goods).or_else(|reason| {
+        // println!("Error: {}", reason);
+        Err(reason.to_string())
+    })?;
+    // println!("aaaaaaaaaaaaaaaaa{}", goods_json);
+    Ok(goods_json)
+}

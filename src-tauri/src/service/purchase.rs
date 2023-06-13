@@ -5,6 +5,8 @@ use crate::dal::{
 use chrono::{DateTime, Utc};
 use sqlx::Row;
 use sqlx::{Pool, Postgres};
+use std::vec;
+use tracing::info;
 // use crate::error::error::Error;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 struct PoWrapper {
@@ -13,6 +15,11 @@ struct PoWrapper {
     purchase_time: DateTime<Utc>,
     pay_status: String,
     po_details: Vec<PoDetail>,
+}
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PoQueryParams {
+    purchase_id: Option<i32>,
+    worker_id: Option<i32>,
 }
 #[tauri::command(async)]
 pub async fn show_purchase() -> Result<String, String> {
@@ -140,7 +147,7 @@ pub async fn fetch_po_bytime(
 //     .bind(po_short.pay_status)
 //     .fetch_one(&mut tx)
 //     .await.or_else(|reason| {
-//         // println!("Error: {}", reason);
+//         println!("Error: {}", reason);
 //         Err(reason.to_string())
 //     })?
 //     .get(0);
@@ -154,13 +161,68 @@ pub async fn fetch_po_bytime(
 //         .execute(&mut tx)
 //         .await
 //         .or_else(|reason| {
-//             // println!("Error: {}", reason);
+//             println!("Error: {}", reason);
 //             Err(reason.to_string())
 //         })?;
 //     }
 //     tx?.commit().await.or_else(|reason| {
-//         // println!("Error: {}", reason);
+//         log::error!("Error: {}", reason);
 //         Err(reason.to_string())
 //     })?;
 //     Ok(po_id.to_string())
 // }
+
+#[tauri::command(async)]
+pub async fn query_purchase(po: PoQueryParams) -> Result<String, String> {
+    let pool = crate::POOL.read().await;
+    let condition = match po {
+        PoQueryParams {
+            purchase_id: Some(purchase_id),
+            worker_id: Some(worker_id),
+        } => format!(
+            "purchase_id = {} and worker_id = {}",
+            purchase_id, worker_id
+        ),
+        PoQueryParams {
+            purchase_id: Some(purchase_id),
+            worker_id: None,
+        } => format!("purchase_id = {}", purchase_id),
+        PoQueryParams {
+            purchase_id: None,
+            worker_id: Some(worker_id),
+        } => format!("worker_id = {}", worker_id),
+        PoQueryParams {
+            purchase_id: None,
+            worker_id: None,
+        } => "1=1".to_string(),
+    };
+
+    info!("{}", condition);
+    let po = PoManager::query(pool.get_pool(), &condition)
+        .await
+        .or_else(|reason| {
+            // println!("Error: {}", reason);
+            Err(reason.to_string())
+        })?;
+    let po_short = po.0;
+    let po_detail = po.1;
+    let mut wrappers: Vec<PoWrapper> = Vec::new();
+    for short in &po_short {
+        let mut wrapper = PoWrapper {
+            purchase_id: short.purchase_id,
+            worker_id: short.worker_id,
+            purchase_time: short.purchase_time,
+            pay_status: short.pay_status.clone(),
+            po_details: Vec::new(),
+        };
+        for detail in &po_detail {
+            if detail[0].purchase_id == short.purchase_id {
+                wrapper.po_details = detail.clone();
+            }
+        }
+        wrappers.push(wrapper);
+    }
+    let wrapper_json = serde_json::to_string(&wrappers).map_err(|reason| reason.to_string())?;
+    info!("{}", wrapper_json);
+    Ok(wrapper_json)
+}

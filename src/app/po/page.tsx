@@ -11,6 +11,7 @@ import { DownOutlined, PlusOutlined } from "@ant-design/icons"
 import {
   ActionType,
   PageContainer,
+  ParamsType,
   ProCard,
   ProColumns,
   ProLayout,
@@ -34,14 +35,19 @@ import {
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import Dropdown from "antd/lib/dropdown/dropdown"
+import domtoimage from "dom-to-image"
+import JsBarcode from "jsbarcode"
 import { Redo, Search } from "lucide-react"
 import { useSession } from "next-auth/react"
+import { DOMImplementation, XMLSerializer } from "xmldom"
+import { string } from "zod"
 import { exportWordDocx } from "@/lib/printdocx"
 import NewPoForm from "@/components/newpoform"
 import { UserAccountNav } from "@/components/user-account-nav"
 
 const { Option } = Select
-
+const imgwidth = 200 // Replace with the desired width of the image
+const imgheight = 100 // Replace with the desired height of the image
 // import BasicLayout from "../app/BasicLayout";
 interface po_short {
   purchase_id: number
@@ -62,9 +68,34 @@ interface Result {
   total: number
   list: po_short[]
 }
+const blob2Url = (blob: Blob) => {
+  return URL.createObjectURL(blob)
+}
+
 const getTableData = async (): Promise<Result> => {
   const res = await invoke("show_purchase")
   const res_1 = JSON.parse(JSON.parse(JSON.stringify(res)))
+  return {
+    total: res_1.length,
+    list: res_1,
+  }
+}
+
+const getTableDataWithParams = async (params: ParamsType): Promise<Result> => {
+  const realParams = {
+    po: {
+      worker_id: Number(params.worker_id),
+      // pay_status: params.pay_status,
+      purchase_id: Number(params.purchase_id),
+      // start_time: params.startTime,
+      // end_time: params.endTime,
+    },
+  }
+  console.log(realParams)
+  const res = await invoke("query_purchase", realParams)
+  const res_1 = JSON.parse(JSON.parse(JSON.stringify(res)))
+
+  console.log(params)
   return {
     total: res_1.length,
     list: res_1,
@@ -143,33 +174,38 @@ const columns: ProColumns<po_short>[] = [
     },
   },
 ]
+
 interface GoodsData {
   label: string
   value: string
 }
 const PO = () => {
+  let [items, setItems] = useState<po_short[]>([])
+  let [detail_items, setDetailItems] = useState<po_detail[]>([])
   const { data: session, status } = useSession()
   const actionRef = useRef<ActionType>()
-  //   if (status === "authenticated") {
-  //     return <p>Signed in as {session.user.email}</p>
-  //   }
+  const xmlSerializer = new XMLSerializer()
+  const document = new DOMImplementation().createDocument(null, "svg", null)
+  // const svgNode = document.createElementNS("http://www.w3.org/2000/svg", "svg")
 
   let date = new Date()
-  if (!session) {
-    return <p>加载中</p>
-  }
   let data2print = {
+    // imglist: [],
+    imgUrl: "",
+    purchaseid: 114514,
     year: date.getFullYear(),
     month: date.getMonth() + 1,
     day: date.getDate(),
-    purchase: [
+    supplier_name: "食品公司",
+    po_details: [
       {
-        purchase_id: 123456789,
+        purchase_id: 846532,
         purchase_time: "2021-10-10",
         worker_id: 19,
         pay_status: "Paid",
         goods_id: 12,
         goods_name: "商品1",
+        goods_size: 1515,
         goods_num: 10,
         goods_price: 100,
         goods_total: 1000,
@@ -181,6 +217,7 @@ const PO = () => {
         pay_status: "Paid",
         goods_id: 4,
         goods_name: "商品2",
+        goods_size: 1515,
         goods_num: 10,
         goods_price: 100,
         goods_total: 1000,
@@ -190,6 +227,39 @@ const PO = () => {
     waremanager: "张三",
     manager: "刘北",
   }
+  JsBarcode(document.documentElement, data2print.purchaseid.toString(), {
+    xmlDocument: document,
+    // width: 1,
+    height: 80,
+  })
+
+  const svgText = xmlSerializer.serializeToString(document)
+
+  const svgElement = new DOMParser().parseFromString(
+    svgText,
+    "image/svg+xml"
+  ).documentElement
+
+  domtoimage
+    .toPng(svgElement, {
+      quality: 1.0,
+      width: imgwidth * 2,
+      height: imgheight * 2,
+      imagePlaceholder: "/assets/placeholder.png",
+    })
+    .then((dataUrl) => {
+      console.log(dataUrl)
+      // data2print.imglist.push({ imgUrl: dataUrl })
+      data2print.imgUrl = dataUrl
+    })
+    .catch(function (error) {
+      console.error("oops, something went wrong!", error)
+    })
+
+  if (!session) {
+    return <p>加载中</p>
+  }
+
   const user = session.user
   return (
     <div className="container pt-10">
@@ -210,27 +280,34 @@ const PO = () => {
         <ProTable<po_short>
           columns={columns}
           cardBordered
+          params={{}}
           actionRef={actionRef}
           request={async (params = {}, sort, filter) => {
-            const res = await getTableData()
             console.log(params)
-            res.list.filter((item) => {
-              if (params.purchase_id !== null) {
-                return item.purchase_id === params.purchase_id
-              }
-              if (params.worker_id !== null) {
-                return item.worker_id === params.worker_id
-              }
 
-              return true
-            })
-            res.total = res.list.length
-            console.log(res.list)
+            if (
+              (typeof params.purchase_id === undefined &&
+                typeof params.worker_id === undefined) ||
+              params.purchase_id === "" ||
+              params.worker_id === ""
+            ) {
+              const res = await getTableData()
+              res.total = res.list.length
 
-            return {
-              data: res.list,
-              total: res.total,
-              success: true,
+              return {
+                data: res.list,
+                total: res.total,
+                success: true,
+              }
+            } else {
+              const res = await getTableDataWithParams(params)
+              res.total = res.list.length
+
+              return {
+                data: res.list,
+                total: res.total,
+                success: true,
+              }
             }
           }}
           rowKey="purchase_id"
@@ -280,7 +357,7 @@ const PO = () => {
             selectedRows,
             onCleanSelected,
           }) => {
-            console.log(selectedRowKeys, selectedRows)
+            // console.log(selectedRowKeys, selectedRows)
             return (
               <Space size={20}>
                 <span>

@@ -48,6 +48,17 @@ impl GoodsManager {
         .await?;
         Ok(goods)
     }
+    pub async fn get_by_supplier_id(&self, supplier_id: i32) -> Result<Vec<Goods>> {
+        let mut tx = self.pool.begin().await?;
+        let goods: Vec<Goods> = sqlx::query_as(
+            "SELECT goods_id, supplier_id, goods_name, goods_price, goods_size, goods_sku FROM goods WHERE supplier_id = $1",
+        )
+        .bind(supplier_id)
+        .fetch_all(&mut tx)
+        .await?;
+        Ok(goods)
+    }
+
     pub async fn insert(&self, goods: &Goods) -> Result<()> {
         let mut tx = self.pool.begin().await?;
         sqlx::query(

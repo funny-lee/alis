@@ -7,16 +7,18 @@ mod error;
 mod service;
 use crate::service::{
     arrival::show_all_arrival,
-    goods::show_goods,
-    purchase::{delete_purchase, show_purchase},
+    goods::{get_goods_by_supplier, show_goods},
+    purchase::{delete_purchase, query_purchase, show_purchase},
+    supplier::show_all_supplier,
 };
 use eyre::Result;
 use lazy_static::lazy_static;
+
 use sqlx::postgres::PgPool;
 use sqlx::{Pool, Postgres};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-
+use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt};
 pub struct MyPool(Option<Pool<Postgres>>);
 
 impl MyPool {
@@ -57,13 +59,19 @@ async fn main() -> Result<()> {
     let uri = std::env::var("DATABASE_URL").unwrap();
     let db_uri = &uri;
     init(db_uri).await?;
+    tracing_subscriber::registry().with(fmt::layer()).init();
 
+    // 调用 `log` 包的 `info!`
+    log::info!("starting...");
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             show_purchase,
             delete_purchase,
             show_all_arrival,
             show_goods,
+            get_goods_by_supplier,
+            query_purchase,
+            show_all_supplier
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

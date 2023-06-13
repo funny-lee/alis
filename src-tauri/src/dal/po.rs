@@ -72,6 +72,33 @@ impl PoManager {
         tx.commit().await?;
         Ok(true)
     }
+    pub async fn query(
+        pool: &PgPool,
+        condition: &str,
+    ) -> Result<(Vec<PoShort>, Vec<Vec<PoDetail>>)> {
+        let mut po_all_detail: Vec<Vec<PoDetail>> = Vec::with_capacity(6);
+        let mut tx = pool.begin().await?;
+        let po_shorts: Vec<PoShort> = sqlx::query_as(
+            format!(
+                "SELECT purchase_id, worker_id, purchase_time, pay_status FROM purchase WHERE {}",
+                condition
+            )
+            .as_str(),
+        )
+        .fetch_all(&mut tx)
+        .await?;
+        for po_short in &po_shorts {
+            let po_details: Vec<PoDetail> = sqlx::query_as(
+                "SELECT item_id, purchase_id, purchase_detail.goods_id, goods_num ,goods_name FROM purchase_detail,goods WHERE purchase_detail.goods_id = goods.goods_id and purchase_id = $1")
+                .bind(po_short.purchase_id)
+            .fetch_all(&mut tx)
+            .await?;
+
+            po_all_detail.push(po_details);
+        }
+        tx.commit().await?;
+        Ok((po_shorts, po_all_detail))
+    }
 }
 
 #[async_trait]
