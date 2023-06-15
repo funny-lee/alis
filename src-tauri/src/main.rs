@@ -8,7 +8,7 @@ mod service;
 use crate::service::{
     arrival::show_all_arrival,
     goods::{get_goods_by_supplier, show_goods},
-    purchase::{delete_purchase, query_purchase, show_purchase},
+    purchase::{delete_purchase, get_new_purchase_id, new_purchase, query_purchase, show_purchase},
     supplier::show_all_supplier,
 };
 use eyre::Result;
@@ -65,13 +65,15 @@ async fn main() -> Result<()> {
     log::info!("starting...");
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
+            get_new_purchase_id,
             show_purchase,
             delete_purchase,
             show_all_arrival,
             show_goods,
             get_goods_by_supplier,
             query_purchase,
-            show_all_supplier
+            show_all_supplier,
+            new_purchase
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

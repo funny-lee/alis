@@ -14,4 +14,5 @@ pub async fn show_all_arrival() -> Result<String, String> {
     // println!("arrival_json: {}", arrival_json);
     Ok(arrival_json)
 }
+
  

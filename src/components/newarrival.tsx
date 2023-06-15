@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { DownOutlined, PlusOutlined } from "@ant-design/icons"
 import {
   ModalForm,
@@ -7,6 +8,7 @@ import {
   ProFormText,
   ProTable,
 } from "@ant-design/pro-components"
+import { invoke } from "@tauri-apps/api/tauri"
 import {
   Button,
   Col,
@@ -33,6 +35,21 @@ let arrivals = {
 }
 
 const NewArrivalForm = () => {
+  const [pos, setPos] = useState([])
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await invoke("show_purchase")
+      const res_1 = JSON.parse(JSON.parse(JSON.stringify(res)))
+      return {
+        total: res_1.length,
+        list: res_1,
+      }
+    }
+    fetchData().then((res) => {
+      setPos(res.list)
+    })
+  }, [])
+
   const [form] = Form.useForm<{
     purchase_id: number
     purchase_time: string
@@ -76,10 +93,21 @@ const NewArrivalForm = () => {
           name="purchase_id"
           label="采购单号"
           tooltip="系统生成"
-          placeholder="采购单号"
+          placeholder="入库单号"
         />
-
-        <ProFormText width="md" name="contract" label="到货单号" />
+        <ProFormSelect
+          width="md"
+          name="purchase_id"
+          label="采购单号"
+          request={() => {
+            return pos.map((item) => {
+              return {
+                value: item.purchase_id,
+                label: item.purchase_id,
+              }
+            })
+          }}
+        />
       </ProForm.Group>
       <ProForm.Group>
         <ProFormSelect

@@ -5,6 +5,8 @@ use derive_builder::Builder;
 use eyre::Result;
 use sqlx::postgres::PgPool;
 
+use super::po::Po;
+
 #[derive(Debug, Clone, Default, sqlx::FromRow, serde::Serialize, serde::Deserialize, Builder)]
 pub struct Arrival {
     #[builder(setter(into))]
@@ -24,7 +26,13 @@ pub struct Arrival {
 pub struct ArrivalManager {
     pool: PgPool,
 }
-
+impl From<Po> for Arrival {
+    fn from(po: Po) -> Self {
+        let mut arrival = Arrival::default();
+        arrival.purchase_id = po.po_short.purchase_id;
+        arrival
+    }
+}
 impl ArrivalManager {
     pub fn new(pool: &PgPool) -> Self {
         ArrivalManager { pool: pool.clone() }
@@ -38,7 +46,7 @@ impl ArrivalManager {
 		.await?;
         Ok(arrivals)
     }
-    async fn delete( pool: &PgPool,arrival_id:i32) -> Result<bool> {
+    async fn delete(pool: &PgPool, arrival_id: i32) -> Result<bool> {
         let mut tx = pool.begin().await?;
 
         sqlx::query("DELETE FROM arrival WHERE arrival_id = $1 RETURNING arrival_id")
@@ -73,5 +81,4 @@ impl Manage for Arrival {
         tx.commit().await?;
         Ok(true)
     }
-    
 }

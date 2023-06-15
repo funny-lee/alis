@@ -99,6 +99,20 @@ impl PoManager {
         tx.commit().await?;
         Ok((po_shorts, po_all_detail))
     }
+    // pub async fn get_newer_id()->Result<i32>{
+    //     let pool = crate::POOL.read().await;
+    //     let mut tx = pool.begin().await?;
+    //     let result = sqlx::query!(
+    //         r#"
+    //         SELECT purchase_id FROM purchase ORDER BY purchase_id DESC LIMIT 1
+    //         "#
+    //     )
+    //     .fetch_one(&mut tx)
+    //     .await?
+    //     .purchase_id;
+    //     tx.commit().await?;
+    //     Ok(result)
+    // }
 }
 
 #[async_trait]
