@@ -15,4 +15,3 @@
   - Ant Design
   - Tailwindcss
   - Framer
-- D2

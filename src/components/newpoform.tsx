@@ -21,11 +21,6 @@ import { on } from "events"
 import { Plus, PlusCircle, Smile, XCircle } from "lucide-react"
 import { set } from "react-hook-form"
 
-const newPurchase = async (po) => {
-  const res = await invoke("new_purchase", po)
-  console.log(res)
-  return res
-}
 interface GoodsData {
   label: string
   value: number

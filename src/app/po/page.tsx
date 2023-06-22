@@ -35,6 +35,8 @@ import {
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import Dropdown from "antd/lib/dropdown/dropdown"
+import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
 import domtoimage from "dom-to-image"
 import JsBarcode from "jsbarcode"
 import { Redo, Search } from "lucide-react"
@@ -82,13 +84,19 @@ const getTableData = async (): Promise<Result> => {
 }
 
 const getTableDataWithParams = async (params: ParamsType): Promise<Result> => {
+  console.log(params.startTime)
+  if (params.startTime === undefined || params.endTime === undefined) {
+    params.startTime = "2021-01-01"
+    params.endTime = "2023-12-31"
+  }
+  dayjs.extend(utc)
   const realParams = {
     po: {
       worker_id: Number(params.worker_id),
       // pay_status: params.pay_status,
       purchase_id: Number(params.purchase_id),
-      // start_time: params.startTime,
-      // end_time: params.endTime,
+      start_time: dayjs.utc(params.startTime).format(),
+      end_time: dayjs.utc(params.endTime).format(),
     },
   }
   console.log(realParams)
@@ -116,6 +124,9 @@ const columns: ProColumns<po_short>[] = [
     dataIndex: "purchase_time",
     key: "purchase_time",
     sorter: (a, b) => a.purchase_time.localeCompare(b.purchase_time),
+    render: (time) => (
+      <text>{dayjs.utc(time).format("YYYY-MM-DD").toString()}</text>
+    ),
   },
   {
     title: "采购员工号",
@@ -130,9 +141,9 @@ const columns: ProColumns<po_short>[] = [
     key: "pay_status",
     render: (pay_status) =>
       pay_status === "Paid" ? (
-        <Tag color="green">{pay_status}</Tag>
+        <Tag color="green">已支付</Tag>
       ) : (
-        <Tag color="volcano">{pay_status}</Tag>
+        <Tag color="volcano">未支付</Tag>
       ),
   },
   {
@@ -283,11 +294,13 @@ const PO = () => {
           params={{}}
           actionRef={actionRef}
           request={async (params = {}, sort, filter) => {
-            console.log(params)
+            // console.log(params.startTime)
 
             if (
               (typeof params.purchase_id === undefined &&
-                typeof params.worker_id === undefined) ||
+                typeof params.worker_id === undefined &&
+                typeof params.startTime === undefined &&
+                typeof params.endTime === undefined) ||
               params.purchase_id === "" ||
               params.worker_id === ""
             ) {
