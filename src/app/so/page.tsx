@@ -75,19 +75,19 @@ const columns: ProColumns<po_short>[] = [
   Table.SELECTION_COLUMN,
   Table.EXPAND_COLUMN,
   {
-    title: "采购单号",
+    title: "发运单号",
     dataIndex: "purchase_id",
     key: "purchase_id",
     render: (text) => <a>{text}</a>,
   },
   {
-    title: "采购时间",
+    title: "发运时间",
     dataIndex: "purchase_time",
     key: "purchase_time",
     sorter: (a, b) => a.purchase_time.localeCompare(b.purchase_time),
   },
   {
-    title: "采购员工号",
+    title: "发运员工号",
     dataIndex: "worker_id",
     key: "worker_id",
   },
