@@ -7,11 +7,6 @@ import Head from "next/head"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import {
-  GithubFilled,
-  InfoCircleFilled,
-  QuestionCircleFilled,
-} from "@ant-design/icons"
-import {
   PageContainer,
   ProCard,
   ProLayout,
@@ -54,7 +49,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <SessionProvider>
       <html lang="en" suppressHydrationWarning>
         {/* <Head children={undefined} /> */}
-        <body className="bg-transparent font-sans antialiased scrollbar-none">
+        <body className="scrollbar-none bg-transparent font-sans antialiased">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="h-screen overflow-clip rounded-lg border">
               <Menu />

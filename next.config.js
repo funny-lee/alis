@@ -8,7 +8,6 @@ const nextConfig = {
     domains: ["avatars.githubusercontent.com", "images.unsplash.com"],
   },
   experimental: {
-    appDir: true,
     serverComponentsExternalPackages: ["@prisma/client"],
   },
   output: "standalone",
